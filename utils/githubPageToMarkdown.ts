@@ -9,7 +9,7 @@ interface GithubPage { user: string, branch: string, repo: string }
 
 
 export async function fetchGitHubMarkdown(url: string): Promise<string> {
-    const response = await fetch(url);
+    const response = await fetch(url, { next: { revalidate: QUERY_REVALIDATION_TIME } }));
     if (!response.ok) {
         throw new Error(`Failed to fetch file from GitHub: ${response.statusText}`);
     }
