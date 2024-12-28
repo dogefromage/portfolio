@@ -3,13 +3,13 @@ import html from 'remark-html';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeRewrite from 'rehype-rewrite';
 
-const QUERY_REVALIDATION_TIME = 3600; // once every hour
+const PAGE_TTL = 300; // 5 minutes
 
 interface GithubPage { user: string, branch: string, repo: string }
 
 
 export async function fetchGitHubMarkdown(url: string): Promise<string> {
-    const response = await fetch(url, { next: { revalidate: QUERY_REVALIDATION_TIME } }));
+    const response = await fetch(url, { next: { revalidate: PAGE_TTL } });
     if (!response.ok) {
         throw new Error(`Failed to fetch file from GitHub: ${response.statusText}`);
     }
@@ -18,7 +18,7 @@ export async function fetchGitHubMarkdown(url: string): Promise<string> {
 
 export async function getGithubPages(): Promise<GithubPage[]> {
     const url = 'https://raw.githubusercontent.com/dogefromage/repo-cms-data/refs/heads/master/data.txt';
-    const raw = await (await fetch(url, { next: { revalidate: QUERY_REVALIDATION_TIME } })).text();
+    const raw = await (await fetch(url, { next: { revalidate: PAGE_TTL } })).text();
     const pages = raw
         .split('\n')
         .map(line => line.split(' '))
