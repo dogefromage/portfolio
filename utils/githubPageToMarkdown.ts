@@ -5,7 +5,13 @@ import rehypeRewrite from 'rehype-rewrite';
 
 const PAGE_TTL = 300; // 5 minutes
 
-interface GithubPage { user: string, branch: string, repo: string }
+interface GithubPage { 
+    displayName: string;
+    date: string;
+    repo: string;
+    branch: string; 
+    user: string;
+};
 
 
 export async function fetchGitHubMarkdown(url: string): Promise<string> {
@@ -16,14 +22,22 @@ export async function fetchGitHubMarkdown(url: string): Promise<string> {
     return response.text();
 }
 
+function parseArguments(input: string): string[] {
+    const regex = /\"(.*?)\"|(\S+)/g;
+    const matches = [...input.matchAll(regex)];
+    return matches.map(match => match[1] ?? match[2]);
+}
+
 export async function getGithubPages(): Promise<GithubPage[]> {
     const url = 'https://raw.githubusercontent.com/dogefromage/repo-cms-data/refs/heads/master/data.txt';
     const raw = await (await fetch(url, { next: { revalidate: PAGE_TTL } })).text();
     const pages = raw
         .split('\n')
-        .map(line => line.split(' '))
-        .map(([repo, user, branch]) => ({ repo, user, branch }));
-    // console.log(pages);
+        .map(x => x.trim())
+        .filter(x => x.length)
+        .map(parseArguments)
+        .map(([repo, user, branch, displayName, date]) => ({ repo, user, branch, displayName, date }));
+    console.log(pages);
     return pages;
 }
 

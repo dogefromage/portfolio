@@ -47,6 +47,35 @@ a {
   }
 }
 
+@media only screen and (max-device-width: 480px) {
+
+  body {
+
+    padding-top: 0 !important;
+
+    main {
+      flex-direction: column;
+  
+      .r-nav {
+        width: 100%;
+        position: static;
+        // position: absolute;
+        top: 0;
+        left: 0;
+        padding: 2em;
+      }
+    
+      .r-article {
+        width: 100%;
+      }
+    
+      figure {
+        min-width: 100% !important;
+      }
+    }
+  }
+}
+
 
 .md-prose {
   // font-size: 1rem;
@@ -61,6 +90,7 @@ a {
   /* Dark background */
   padding: 1rem;
   border-radius: 8px;
+  overflow: hidden;
 
   /* Headings */
   h1,
@@ -130,7 +160,7 @@ a {
   /* Code */
   code {
     font-family: monospace;
-    padding: 0.2em 0.4em;
+    // padding: 0.2em 0.4em;
     background-color: #1e1e1e;
     /* Slightly lighter background for contrast */
     border-radius: 4px;

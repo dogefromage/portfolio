@@ -2,7 +2,7 @@ import { fetchGitHubMarkdown, getGithubPageData, markdownToHtml } from '../../..
 
 export default async function ProjectPage({ params }: { params: Promise<{ project: string }> }) {
   try {
-    const { user, repo, branch } = await getGithubPageData((await params).project);
+    const { user, repo, branch, date, displayName } = await getGithubPageData((await params).project);
     // console.log(user, repo, branch);
 
     const contentUrl = `https://raw.githubusercontent.com/${user}/${repo}/${branch}`;
@@ -13,7 +13,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ projec
     const content = await markdownToHtml(markdown, contentUrl);
 
     return (<>
-      <h1 className='text-2xl mb-8'>
+      <h1 className='text-2xl mb-8 break-all'>
+        <span className="text-accent">[{ date }] </span>
         <a href={`https://github.com/${user}/${repo}`}>
           {`github/${user}/${repo}`}
           <span className='text-accent'>/README.md</span>

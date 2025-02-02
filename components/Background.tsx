@@ -1,5 +1,5 @@
 "use client"
-import { PropsWithChildren, useEffect, useRef } from 'react';
+import React, { PropsWithChildren, useEffect, useRef } from 'react';
 
 const SPEED = 4;
 const DRAG = 0.01;
@@ -9,6 +9,9 @@ const COHESION = 10;
 const SEPARATION = 30;
 const SEPARATION_RING = 0.3;
 const COLOR_LERP = 1;
+const POINTER_DIST_THRESHOLD = 100;
+const POINTER_AVOIDANCE = 150;
+const SPAWNCOUNT_PER_MILLION_PIXELS = 100;
 
 function calculateAngularForce(current: number, target: number): number {
     const TWO_PI = 2 * Math.PI;
@@ -39,7 +42,9 @@ class Boid {
     vx = 0;
     vy = 0;
     size = 0;
-    speed = 0;
+    base_speed = 0;
+    current_speed = 0;
+    boost = 0;
     angle = 0;
     angularVelocity = 0;
 
@@ -54,15 +59,24 @@ class Boid {
 class Game {
 
     private boids: Boid[] = [];
+    private pointerX = 0;
+    private pointerY = 0;
 
     constructor(
         private ctx: CanvasRenderingContext2D,
     ) {}
 
+    setPointer(x: number, y: number) {
+        this.pointerX = x;
+        this.pointerY = y;
+    }
+
     start() {
         const { width, height } = this.ctx.canvas;
 
-        for (let i = 0; i < 100; i++) {
+        const spawnCount = SPAWNCOUNT_PER_MILLION_PIXELS * width * height / 1e6;
+
+        for (let i = 0; i < spawnCount; i++) {
             const b = new Boid();
             b.x = Math.random() * width;
             b.y = Math.random() * height;
@@ -70,7 +84,7 @@ class Game {
             b.angularVelocity = (Math.random() - 0.5) * 1;
 
             b.size = 4 + 3 * Math.random();
-            b.speed = SPEED * b.size;
+            b.base_speed = b.current_speed = SPEED * b.size;
 
             const c = 0.8;
             b.r = b.leader_r = (1 - c) + c * Math.random();
@@ -112,6 +126,8 @@ class Game {
             const others = neightboring.filter(b => b.boid != boid);
             const closest = others.filter(b => b.dist < NEIGHBOR_RADIUS * SEPARATION_RING);
 
+            let sum_of_forces = 0;
+
             if (others.length > 0) {
                 // color
                 const leader_r = neightboring[0].boid.leader_r;
@@ -121,7 +137,6 @@ class Game {
                 boid.g = lerp(boid.g, leader_g, COLOR_LERP * dt);
                 boid.b = lerp(boid.b, leader_b, COLOR_LERP * dt);
 
-                let sum_of_forces = 0;
 
                 // alignment
                 const avg_vx = sum(others.map(b => b.boid.vx)) / others.length;
@@ -150,14 +165,39 @@ class Game {
                     sum_of_forces += SEPARATION * separation_force;
                 }
 
-                boid.angularVelocity += sum_of_forces * dt;
             }
+
+            // avoid pointer
+            const pointer_diff_x = this.pointerX - boid.x;
+            const pointer_diff_y = this.pointerY - boid.y;
+            const pointer_dist = Math.hypot(pointer_diff_x, pointer_diff_y);
+            if (pointer_dist < POINTER_DIST_THRESHOLD) {
+                const pointer_angle = Math.atan2(-pointer_diff_y, -pointer_diff_x);
+                const pointer_force = pointer_dist / POINTER_DIST_THRESHOLD * calculateAngularForce(boid.angle, pointer_angle);
+                sum_of_forces += POINTER_AVOIDANCE * pointer_force;
+                boid.boost = 1;
+            }
+
+            boid.angularVelocity += sum_of_forces * dt;
 
             boid.angle += dt * boid.angularVelocity;
             boid.angularVelocity *= DRAG * dt;
 
-            boid.vx = boid.speed * Math.cos(boid.angle);
-            boid.vy = boid.speed * Math.sin(boid.angle);
+            let target_speed = boid.base_speed;
+            if (boid.boost > 0) {
+                target_speed *= 5;
+                boid.boost -= dt;
+            }
+            if (boid.current_speed < target_speed) {
+                // speed up
+                boid.current_speed = lerp(boid.current_speed, target_speed, Math.min(1, dt * 5));
+            } else {
+                // slow down
+                boid.current_speed = lerp(boid.current_speed, target_speed, Math.min(1, dt * 0.5));
+            }
+
+            boid.vx = boid.current_speed * Math.cos(boid.angle);
+            boid.vy = boid.current_speed * Math.sin(boid.angle);
             boid.x += boid.vx * dt;
             boid.y += boid.vy * dt;
 
@@ -214,12 +254,14 @@ const Background = ({}: PropsWithChildren<BackgroundProps>) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     const resize = () => {
-        const rect = divRef.current!.getBoundingClientRect();
-        const width = rect.width;
-        const height = rect.height;
+        // const rect = divRef.current!.getBoundingClientRect();
+        // const width = rect.width;
+        // const height = rect.height;
         const canv = canvasRef.current!;
-        canv.width = width;
-        canv.height = height;
+        // canv.width = width;
+        // canv.height = height;
+        canv.width = window.innerWidth;
+        canv.height = window.innerHeight;
     };
 
     useEffect(() => {
@@ -252,14 +294,22 @@ const Background = ({}: PropsWithChildren<BackgroundProps>) => {
         };
         requestAnimationFrame(animate);
 
+        const mouseMove = (e: MouseEvent) => {
+            game.setPointer(e.clientX, e.clientY);
+
+        };
+        document.addEventListener('mousemove', mouseMove);
+
         return () => {
             isRunning = false;
+            document.removeEventListener('mousemove', mouseMove);
         };
     }, []);
 
     return (
-        <div className='w-full h-full overflow-hidden fade-in blur-sm saturate-150' ref={divRef} onResize={resize}>
-            <canvas ref={canvasRef} />
+        <div className='w-full h-full overflow-hidden fade-in blur-sm saturate-150' 
+            ref={divRef} onResize={resize}>
+            <canvas ref={canvasRef} className='' />
         </div>
     );
 }

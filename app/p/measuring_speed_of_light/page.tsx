@@ -4,7 +4,7 @@ export default function () {
     return (
         <div className="md-prose">
             <h1 className='text-2xl mb-8'>
-                <span className="text-accent">2019: </span>
+                <span className="text-accent">[2019] </span>
                 Measuring the speed of light 1900s-style
             </h1>
             <p>During my third year in the Gymnasium Liestal we were tasked to measure a natural constant. Our team decided to try an <a href="https://en.wikipedia.org/wiki/Fizeau%27s_measurement_of_the_speed_of_light_in_air">old method of measuring the speed of light by Hippolyte Fizeau</a>.

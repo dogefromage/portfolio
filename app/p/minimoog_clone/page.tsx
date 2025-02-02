@@ -4,7 +4,7 @@ export default function SpeedOfLight() {
     return (
         <div className="md-prose">
             <h1 className='text-2xl mb-8'>
-                <span className="text-accent">2020: </span>
+                <span className="text-accent">[2020] </span>
                 Building a vintage analog synthesizer - Clone of Minimoog Model D</h1>
 
             <p className="text-lg">
