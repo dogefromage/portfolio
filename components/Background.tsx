@@ -1,17 +1,18 @@
 "use client"
 import React, { PropsWithChildren, useEffect, useRef } from 'react';
+import { kmeans } from 'ml-kmeans';
 
 const SPEED = 4;
 const DRAG = 0.01;
 const NEIGHBOR_RADIUS = 100;
 const ALIGNMENT = 30;
-const COHESION = 10;
-const SEPARATION = 30;
+const COHESION = 15;
+const SEPARATION = 25;
 const SEPARATION_RING = 0.3;
 const COLOR_LERP = 1;
 const POINTER_DIST_THRESHOLD = 100;
 const POINTER_AVOIDANCE = 150;
-const SPAWNCOUNT_PER_MILLION_PIXELS = 100;
+const SPAWNCOUNT_PER_MILLION_PIXELS = 150;
 
 function calculateAngularForce(current: number, target: number): number {
     const TWO_PI = 2 * Math.PI;
@@ -48,10 +49,10 @@ class Boid {
     angle = 0;
     angularVelocity = 0;
 
-    r = 0; 
+    r = 0;
     g = 0;
     b = 0;
-    leader_r = 0; 
+    leader_r = 0;
     leader_g = 0;
     leader_b = 0;
 }
@@ -120,6 +121,41 @@ class Game {
     update(dt: number) {
         const { width, height } = this.ctx.canvas;
 
+        const features = [];
+        for (const boid of this.boids) {
+            features.push([boid.x, boid.y]);
+        }
+        // color using kmeans
+        const num_clusters = 8;
+        const result = kmeans(features, num_clusters, {});
+        const cluster_members = new Map<number, number[]>();
+        for (let k = 0; k < num_clusters; k++) {
+            cluster_members.set(k, []);
+        }
+        for (let i = 0; i < result.clusters.length; i++) {
+            cluster_members.get(result.clusters[i])!.push(i);
+        }
+        // assign colors
+        for (let k = 0; k < num_clusters; k++) {
+            const cluster = cluster_members.get(k)!;
+            if (cluster.length < 0) {
+                continue;
+            }
+            const leader = this.boids[cluster[0]];
+            for (let i = 0; i < cluster.length; i++) {
+                const boid = this.boids[cluster[i]];
+                const leader_r = leader.leader_r;
+                const leader_g = leader.leader_g;
+                const leader_b = leader.leader_b;
+                boid.r = lerp(boid.r, leader_r, COLOR_LERP * dt);
+                boid.g = lerp(boid.g, leader_g, COLOR_LERP * dt);
+                boid.b = lerp(boid.b, leader_b, COLOR_LERP * dt);
+            }
+
+        }
+
+
+
         for (const boid of this.boids) {
 
             const neightboring = this.getFlock(boid);
@@ -129,13 +165,13 @@ class Game {
             let sum_of_forces = 0;
 
             if (others.length > 0) {
-                // color
-                const leader_r = neightboring[0].boid.leader_r;
-                const leader_g = neightboring[0].boid.leader_g;
-                const leader_b = neightboring[0].boid.leader_b;
-                boid.r = lerp(boid.r, leader_r, COLOR_LERP * dt);
-                boid.g = lerp(boid.g, leader_g, COLOR_LERP * dt);
-                boid.b = lerp(boid.b, leader_b, COLOR_LERP * dt);
+                // // color
+                // const leader_r = neightboring[0].boid.leader_r;
+                // const leader_g = neightboring[0].boid.leader_g;
+                // const leader_b = neightboring[0].boid.leader_b;
+                // boid.r = lerp(boid.r, leader_r, COLOR_LERP * dt);
+                // boid.g = lerp(boid.g, leader_g, COLOR_LERP * dt);
+                // boid.b = lerp(boid.b, leader_b, COLOR_LERP * dt);
 
 
                 // alignment
@@ -212,7 +248,7 @@ class Game {
 
         // clear
         ctx.clearRect(0, 0, width, height);
-        
+
         // boids
         // ctx.strokeStyle = '#ffffff';
         // ctx.lineWidth = 1;
@@ -221,7 +257,7 @@ class Game {
             ctx.translate(boid.x, boid.y);
             ctx.rotate(boid.angle);
 
-            const col = [ boid.r, boid.g, boid.b ]
+            const col = [boid.r, boid.g, boid.b]
                 .map(c => Math.min(Math.max(0, Math.floor(255 * c)), 255))
                 .join(', ');
             ctx.fillStyle = `rgb(${col})`;
@@ -231,14 +267,14 @@ class Game {
             const b = boid.size;
 
             ctx.beginPath();
-            ctx.moveTo(-0.5*a, 0);
+            ctx.moveTo(-0.5 * a, 0);
             ctx.lineTo(-a, b);
             ctx.lineTo(a, 0);
             ctx.lineTo(-a, -b);
-            ctx.lineTo(-0.5*a, 0);
+            ctx.lineTo(-0.5 * a, 0);
             ctx.fill();
             // ctx.stroke();
-            
+
             ctx.resetTransform();
         }
     }
@@ -307,7 +343,7 @@ const Background = ({}: PropsWithChildren<BackgroundProps>) => {
     }, []);
 
     return (
-        <div className='w-full h-full overflow-hidden fade-in blur-sm saturate-150' 
+        <div className='w-full h-full overflow-hidden fade-in blur-sm saturate-150'
             ref={divRef} onResize={resize}>
             <canvas ref={canvasRef} className='' />
         </div>
