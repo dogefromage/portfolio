@@ -7,6 +7,11 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     '/**/*': ['./content/**/*'],
   },
+  images: {
+    remotePatterns: [
+      { protocol: 'https', hostname: 'raw.githubusercontent.com', pathname: '/dogefromage/**' },
+    ],
+  },
 };
 
 export default nextConfig;

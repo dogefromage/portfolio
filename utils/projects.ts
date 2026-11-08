@@ -18,6 +18,8 @@ export interface Project {
     year: string;
     body: string;
     github?: GithubSource;
+    featured?: number;
+    thumbnail?: string;
 };
 
 async function readProject(filename: string): Promise<Project> {
@@ -39,6 +41,8 @@ async function readProject(filename: string): Promise<Project> {
         year: String(data.year),
         body: content,
         github,
+        featured: data.featured,
+        thumbnail: data.thumbnail,
     };
 }
 
@@ -47,6 +51,14 @@ export async function getProjects(): Promise<Project[]> {
     const filenames = (await readdir(PROJECTS_DIR)).filter(name => name.endsWith('.md'));
     const projects = await Promise.all(filenames.map(readProject));
     return projects.sort((a, b) => b.year.localeCompare(a.year) || a.slug.localeCompare(b.slug));
+}
+
+/** Projects shown on the home page, in the order of their `featured` number. */
+export async function getFeaturedProjects(): Promise<Project[]> {
+    const projects = await getProjects();
+    return projects
+        .filter(project => project.featured !== undefined)
+        .sort((a, b) => a.featured! - b.featured!);
 }
 
 export async function getProject(slug: string): Promise<Project | undefined> {
