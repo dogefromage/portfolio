@@ -7,11 +7,12 @@ import rehypeSanitize from 'rehype-sanitize';
 import rehypeStringify from 'rehype-stringify';
 import { visit } from 'unist-util-visit';
 
-const SMALL_IMAGE_SUFFIX = '#small';
+const IMAGE_SIZE_SUFFIX = /#(small|medium)$/;
 
 /**
  * Turns a paragraph containing only an image into a figure:
  * ![alt](/image.jpg "caption") or ![alt](/image.jpg#small "caption")
+ * The size suffix becomes a class on the figure, see globals.scss.
  */
 function rehypeFigures() {
     return (tree: any) => {
@@ -22,8 +23,8 @@ function rehypeFigures() {
             }
 
             const { src, title, ...properties } = img.properties;
-            const small = src.endsWith(SMALL_IMAGE_SUFFIX);
-            img.properties = { ...properties, src: small ? src.slice(0, -SMALL_IMAGE_SUFFIX.length) : src };
+            const size = src.match(IMAGE_SIZE_SUFFIX)?.[1];
+            img.properties = { ...properties, src: src.replace(IMAGE_SIZE_SUFFIX, '') };
 
             const children = [img];
             if (title) {
@@ -37,7 +38,7 @@ function rehypeFigures() {
             parent.children[index] = {
                 type: 'element',
                 tagName: 'figure',
-                properties: small ? { className: ['small'] } : {},
+                properties: size ? { className: [size] } : {},
                 children,
             };
         });
