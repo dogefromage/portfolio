@@ -2,8 +2,8 @@
 title: Building a vintage analog synthesizer - Clone of Minimoog Model D
 navTitle: Minimoog Synthesizer Clone
 year: 2020
-featured: 3
-thumbnail: /synth_front.jpg
+# featured: 3
+# thumbnail: /synth_front.jpg
 ---
 
 <p class="text-lg"><a href="/building_an_analog_synthesizer_compressed.pdf">&gt;&gt;&gt; Download my matura paper &lt;&lt;&lt;</a></p>
