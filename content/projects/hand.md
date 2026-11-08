@@ -10,9 +10,7 @@ From many online projects like [Will Cogley's YouTube channel](https://www.youtu
 
 With my design, I specifically wanted to focus more on fast actuation and the true human proportions, in contrast to strength. This would categorize my hand into more of an animatronic part. A life-like hand with convincing movement. After all, I think a lot of realism stems from the animation itself and I did not want my hand to become too "robotic".
 
-<!-- CHECK: the Motion section adds up to 15 actuators (5 fingers x 2, spread, curl, thumb lateral, 2 wrist). Is 16 right? -->
-
-Therefore, my hand features only half-actuated joints, where servos pull pulleys into the flex direction. The opening of the joints is achieved by springs constantly applying a small torque that puts the joints into an extended relaxed position. This let me save half of the actuators and allowed me to place 16 actuators into the space of a regular forearm.
+Therefore, my hand features only half-actuated joints, where servos pull pulleys into the flex direction. The opening of the joints is achieved by springs constantly applying a small torque that puts the joints into an extended relaxed position. This let me save half of the actuators and allowed me to place 15 actuators into the space of a regular forearm.
 
 ![Finished hand](/hand/hand_finished_2.jpeg#medium "The assembled hand without any wiring")
 
@@ -20,21 +18,15 @@ Therefore, my hand features only half-actuated joints, where servos pull pulleys
 
 ## Motion
 
-<!-- CHECK: you count phalanges from the fingertip, so "first" is the tip. Anatomy normally counts from the palm, so proximal is first. Is this order intended? -->
-
-To roughly copy the motion of a regular finger, each finger flexes the first and second phalanx simultaneously using a small fishing line linking the rotation of the outermost two finger joints. This fishing line is placed inside the middle phalanx which is hollow. Thus only the second and third phalanx need to be actuated. 
+To roughly copy the motion of a regular finger, each finger flexes the third  and second phalanx simultaneously using a small fishing line linking the rotation of the outermost two finger joints. This fishing line is placed inside the middle phalanx which is hollow. Thus only the second and third phalanx need to be actuated. 
 
 A single actuator can spread the fingers laterally and another can curl the palm where both the pinky's and the thumb's metacarpal bones curl inwards. This allows the thumb to rotate and gives much more control over complex grasping poses. The thumb's lateral motion is separate from the fingers with an additional actuator.
 
 The hardest part was to mimic the actual motion of the wrist joint, which can rotate on two axes around the same point, while also allowing tendons to pass unrestrictedly (I now understand why carpal tunnel syndrome is a thing. This stuff is complicated...). My solution was to focus on the up and down axis and neglect the sideways motion a bit. Therefore, I used a large servo to control up and down. To not restrict the motion by the wires I kept the axis of rotation hollow and let the wires and tendons go through, crossing the axis (like in the human carpal tunnel). This keeps the wire length constant over different poses and thus does not interfere with the motion.
 
-<!-- CHECK: no gear is mentioned before this point, so a reader won't know which one you mean. -->
-
 What about the gear? Well, that I chose for fun and for the above reason with the hollow axis but now I kinda regret it. It looks cool at the moment but this will be a problem in the future if I want to add skin or some sort of shell... but let's see.
 
-<!-- CHECK: what does "inner hand" mean in this caption? It is unclear which tendons this refers to. -->
-
-![Finished cables](/hand/cables_finished.jpeg#medium "Here the carpal tunnel can be seen with the tendons passing through. The tendons of the inner hand go through the palm upwards first and back down through the carpal tunnel.")
+![Finished cables](/hand/cables_finished.jpeg#medium "Here the carpal tunnel can be seen with the tendons passing through. The tendons from the inner side go through the palm upwards first and back down through the carpal tunnel.")
 
 ## Material Choice 
 
