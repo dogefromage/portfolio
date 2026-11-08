@@ -29,8 +29,15 @@ function parseArguments(input: string): string[] {
 }
 
 export async function getGithubPages(): Promise<GithubPage[]> {
-    const url = 'https://raw.githubusercontent.com/dogefromage/repo-cms-data/refs/heads/master/data.txt';
-    const raw = await (await fetch(url, { next: { revalidate: PAGE_TTL } })).text();
+    // const url = 'https://raw.githubusercontent.com/dogefromage/repo-cms-data/refs/heads/master/data.txt';
+    // const raw = await (await fetch(url, { next: { revalidate: PAGE_TTL } })).text();
+
+    const raw = `
+        pathtracer dogefromage master "Pathtracer from Scratch" 2024
+        unity-black-hole dogefromage main "Black Hole Renderer" 2021
+        Stalemater2000 dogefromage master "C++ Chess Engine" 2024
+    `;
+
     const pages = raw
         .split('\n')
         .map(x => x.trim())
@@ -39,6 +46,7 @@ export async function getGithubPages(): Promise<GithubPage[]> {
         .map(([repo, user, branch, displayName, date]) => ({ repo, user, branch, displayName, date }));
     console.log(pages);
     return pages;
+
 }
 
 export async function getGithubPageData(key: string) {

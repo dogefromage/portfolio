@@ -3,7 +3,7 @@ import { PropsWithChildren } from 'react';
 import { getGithubPages } from '../utils/githubPageToMarkdown';
 import Email from './Email';
 
-interface NavPage { 
+interface NavPage {
   displayName: string;
   date: string;
   slug: string;
@@ -11,9 +11,10 @@ interface NavPage {
 
 
 const customPages: NavPage[] = [
-  { displayName: 'Measuring the speed of light', date: '2019', slug: 'measuring_speed_of_light'},
-  { displayName: 'Minimoog synthesizer clone', date: '2020', slug: 'minimoog_clone' },
-  { displayName: 'Roland juno clone', date: '2025', slug: 'polyphonic_analog_synthesizer' },
+  { displayName: 'Measuring the Speed of Light', date: '2019', slug: 'measuring_speed_of_light' },
+  { displayName: 'Minimoog Synthesizer Clone', date: '2020', slug: 'minimoog_clone' },
+  { displayName: 'Analog Polysynth Build', date: '2025', slug: 'polysynth' },
+  { displayName: 'Compass', date: '2026', slug: 'compass' },
 ]
 
 interface Props {
@@ -56,7 +57,7 @@ const Nav = async ({}: PropsWithChildren<Props>) => {
             const dateStyle = page.dateSeen ? 'invisible' : '';
             return (
               <Link key={page.slug} href={`/p/${page.slug}`}>
-                <span className={"text-accent " + dateStyle}>[{ page.date }] </span>
+                <span className={"text-accent " + dateStyle}>[{page.date}] </span>
                 {page.displayName}
               </Link>
             );

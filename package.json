@@ -12,8 +12,8 @@
     "@tailwindcss/typography": "^0.5.15",
     "ml-kmeans": "^6.0.0",
     "next": "15.1.1",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
     "rehype-highlight": "^7.0.1",
     "rehype-rewrite": "^4.0.2",
     "remark": "^15.0.1",
@@ -22,8 +22,8 @@
   },
   "devDependencies": {
     "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
