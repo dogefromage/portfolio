@@ -4,7 +4,7 @@ import Background from "../components/Background";
 import "./globals.scss";
 import Nav from "../components/Nav";
 
-export const roboto_mono = Roboto_Mono({
+const roboto_mono = Roboto_Mono({
   subsets: ['latin'],
   display: 'swap',
 })

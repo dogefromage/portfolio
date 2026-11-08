@@ -1,42 +1,24 @@
 import Link from 'next/link';
 import { PropsWithChildren } from 'react';
-import { getGithubPages } from '../utils/githubPageToMarkdown';
+import { getProjects } from '../utils/projects';
 import Email from './Email';
-
-interface NavPage {
-  displayName: string;
-  date: string;
-  slug: string;
-};
-
-
-const customPages: NavPage[] = [
-  { displayName: 'Measuring the Speed of Light', date: '2019', slug: 'measuring_speed_of_light' },
-  { displayName: 'Minimoog Synthesizer Clone', date: '2020', slug: 'minimoog_clone' },
-  { displayName: 'Analog Polysynth Build', date: '2025', slug: 'polysynth' },
-  { displayName: 'Compass', date: '2026', slug: 'compass' },
-]
 
 interface Props {
 
 }
 
 const Nav = async ({}: PropsWithChildren<Props>) => {
-  const githubPages = await getGithubPages();
-
-  const allPages = customPages.concat(githubPages
-    .map(({ displayName, date, repo }) => ({ displayName, date, slug: repo })))
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  const projects = await getProjects();
 
   const seenDates = new Set<string>();
-  const pagesWithNewDates = allPages.map(page => {
-    if (seenDates.has(page.date)) {
+  const pagesWithNewDates = projects.map(page => {
+    if (seenDates.has(page.year)) {
       return {
         ...page,
         dateSeen: true,
       };
     } else {
-      seenDates.add(page.date);
+      seenDates.add(page.year);
       return {
         ...page,
         dateSeen: false,
@@ -57,8 +39,8 @@ const Nav = async ({}: PropsWithChildren<Props>) => {
             const dateStyle = page.dateSeen ? 'invisible' : '';
             return (
               <Link key={page.slug} href={`/p/${page.slug}`}>
-                <span className={"text-accent " + dateStyle}>[{page.date}] </span>
-                {page.displayName}
+                <span className={"text-accent " + dateStyle}>[{page.year}] </span>
+                {page.navTitle}
               </Link>
             );
           })

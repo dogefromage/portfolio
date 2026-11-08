@@ -210,10 +210,22 @@ a {
 
   figure {
     padding: 1em;
+    margin: 1rem auto;
+    width: 75%;
+
+    &.small {
+      width: 50%;
+    }
   }
 
   figcaption {
     margin-top: 1em;
+  }
+
+  iframe {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    margin: 2rem 0;
   }
 }
 

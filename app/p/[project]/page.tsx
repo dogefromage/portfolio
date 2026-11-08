@@ -1,26 +1,29 @@
-import { fetchGitHubMarkdown, getGithubPageData, markdownToHtml } from '../../../utils/githubPageToMarkdown';
+import { notFound } from 'next/navigation';
+import { githubMarkdownToHtml, localMarkdownToHtml } from '../../../utils/markdown';
+import { fetchGithubReadme, getProject, getProjects, githubContentUrl, Project } from '../../../utils/projects';
 
-export default async function ProjectPage({ params }: { params: Promise<{ project: string }> }) {
+export const revalidate = 300; // 5 minutes
+
+export async function generateStaticParams() {
+  return (await getProjects()).map(({ slug }) => ({ project: slug }));
+}
+
+async function GithubProject({ project: { year, github } }: { project: Project }) {
+  const { user, repo } = github!;
+
   try {
-    const { user, repo, branch, date, displayName } = await getGithubPageData((await params).project);
-    // console.log(user, repo, branch);
-
-    const contentUrl = `https://raw.githubusercontent.com/${user}/${repo}/${branch}`;
-    // console.log(contentUrl);
-
-    const markdownUrl = `${contentUrl}/README.md`;
-    const markdown = await fetchGitHubMarkdown(markdownUrl);
-    const content = await markdownToHtml(markdown, contentUrl);
+    const markdown = await fetchGithubReadme(github!);
+    const content = await githubMarkdownToHtml(markdown, githubContentUrl(github!));
 
     return (<>
       <h1 className='text-2xl mb-8 break-all'>
-        <span className="text-accent">[{ date }] </span>
+        <span className="text-accent">[{ year }] </span>
         <a href={`https://github.com/${user}/${repo}`}>
           {`github/${user}/${repo}`}
           <span className='text-accent'>/README.md</span>
         </a>
       </h1>
-      <div className="md-prose" 
+      <div className="md-prose"
         dangerouslySetInnerHTML={{ __html: content }} />
     </>)
   }
@@ -31,4 +34,29 @@ export default async function ProjectPage({ params }: { params: Promise<{ projec
       <p>Error on rendering or page not found</p>
     </>);
   }
+}
+
+async function LocalProject({ project: { year, title, body } }: { project: Project }) {
+  const content = await localMarkdownToHtml(body);
+
+  return (
+    <div className="md-prose">
+      <h1 className='text-2xl mb-8'>
+        <span className="text-accent">[{ year }] </span>
+        { title }
+      </h1>
+      <div dangerouslySetInnerHTML={{ __html: content }} />
+    </div>
+  );
+}
+
+export default async function ProjectPage({ params }: { params: Promise<{ project: string }> }) {
+  const project = await getProject((await params).project);
+  if (!project) {
+    notFound();
+  }
+
+  return project.github
+    ? <GithubProject project={project} />
+    : <LocalProject project={project} />;
 }

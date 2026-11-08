@@ -344,7 +344,7 @@ const Background = ({}: PropsWithChildren<BackgroundProps>) => {
 
     return (
         <div className='w-full h-full overflow-hidden fade-in blur-sm saturate-150'
-            ref={divRef} onResize={resize}>
+            ref={divRef}>
             <canvas ref={canvasRef} className='' />
         </div>
     );
