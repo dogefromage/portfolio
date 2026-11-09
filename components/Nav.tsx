@@ -31,9 +31,6 @@ const Nav = async ({}: PropsWithChildren<Props>) => {
       <Link href='/'>Home</Link>
       <p className="text-accent">Projects</p>
       <div className="pl-4 flex flex-col">
-        {/* <Link href='/p/measuring_speed_of_light'>Measuring the speed of light</Link>
-        <Link href='/p/minimoog_clone'>Minimoog synthesizer clone</Link>
-        <Link href='/p/polyphonic_analog_synthesizer'>Roland juno clone</Link> */}
         {
           pagesWithNewDates.map(page => {
             const dateStyle = page.dateSeen ? 'invisible' : '';
