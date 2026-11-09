@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import ImageLightbox from '../../../components/ImageLightbox';
 import { githubMarkdownToHtml, localMarkdownToHtml } from '../../../utils/markdown';
 import { fetchGithubReadme, getProject, getProjects, githubContentUrl, Project } from '../../../utils/projects';
 
@@ -17,13 +18,13 @@ async function GithubProject({ project: { year, github } }: { project: Project }
 
     return (<>
       <h1 className='text-2xl mb-8 break-all'>
-        <span className="text-accent">[{ year }] </span>
+        <span className="text-accent">[{year}] </span>
         <a href={`https://github.com/${user}/${repo}`}>
           {`github/${user}/${repo}`}
           <span className='text-accent'>/README.md</span>
         </a>
       </h1>
-      <div className="md-prose"
+      <div className="md-prose zoomable"
         dangerouslySetInnerHTML={{ __html: content }} />
     </>)
   }
@@ -42,10 +43,10 @@ async function LocalProject({ project: { year, title, body } }: { project: Proje
   return (
     <div className="md-prose">
       <h1 className='text-2xl mb-8'>
-        <span className="text-accent">[{ year }] </span>
-        { title }
+        <span className="text-accent">[{year}] </span>
+        {title}
       </h1>
-      <div dangerouslySetInnerHTML={{ __html: content }} />
+      <div className="zoomable" dangerouslySetInnerHTML={{ __html: content }} />
     </div>
   );
 }
@@ -56,7 +57,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ projec
     notFound();
   }
 
-  return project.github
-    ? <GithubProject project={project} />
-    : <LocalProject project={project} />;
+  return (<>
+    {project.github
+      ? <GithubProject project={project} />
+      : <LocalProject project={project} />}
+    <ImageLightbox />
+  </>);
 }
