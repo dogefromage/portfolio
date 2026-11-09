@@ -3,7 +3,7 @@ title: Building a 1980s 8-voice analog synthesizer inspired by the Roland Juno
 navTitle: Analog Polysynth Build
 year: 2025
 featured: 1
-thumbnail: /polysynth/assembled.webp
+thumbnail: /polysynth/final_top.jpeg
 ---
 
 With many previous synthesizer projects, monotonically increasing in complexity, I finally attempted my shot at a polyphonic analog synthesizer. Of course, it also needs to look nice, which is a large part of the process. 
@@ -28,6 +28,8 @@ For the simplicity and the beloved sound, I chose to imitate the Juno's design a
 The number of voices was rounded up to a practical eight instead of six. Also, I added a sequencer section in addition to the arpeggiator, which has worked out pretty well.
 
 The synthesizer was modeled in Solidworks and the electronics were designed in KiCad. The entire design was built around an old salvaged keybed from an old MIDI keyboard of my friend (shoutout to [Jylorant](https://www.jylorant.com/)).
+
+![Keyboard](/polysynth/keyboard.webp#small "The extracted keyboard with five octaves.")
 
 The chassis is built from wood with solid endpieces and the two panels are mounted on top. The four voice boards with the mainboard are at the heart of the synth. The top PCB screws into the top panel directly.
 
@@ -118,7 +120,7 @@ Creating the panel myself was quite intense. It started out with me realizing th
 
 <figure class="medium">
     <video src="/polysynth/etching_test.mp4" controls preload="metadata"></video>
-    <figcaption>Here you can see me trying an etching solution made with sodium persulfate. This did not work however, since the liquid must be heated to around 50 degress Celsius, which I was not able to set up at that time. I later ordered ferric chloride which works in cold weather as well. Also, my improvised rocking plate works quite poorly.</figcaption>
+    <figcaption>Here you can see me trying an etching solution made with sodium persulfate. This did not work, since the liquid must be heated to around 50 degress Celsius, which I was not able to set up at that time. I later ordered ferric chloride which works in cold weather as well. Also, my improvised rocking plate works quite poorly.</figcaption>
 </figure>
 
 Another issue was getting the print on. To not have to deal with transfers or photo-resist films, I just chose to paint it on. The traces can be quite rough since I have tons of space. So I tested multiple pens to see which has the best etch-resistance (STAEDTLER Lumocolor was best, but I think buying one designed for the job would have been even better).
@@ -147,7 +149,7 @@ What helped a lot when designing the code was to encapsulate behaviour into obje
 
 ![Diagram of firmware classes](/polysynth/synth_overview_seed04.svg)
 
-You can explore or use [the code freely on GitHub](https://github.com/dogefromage/polysynth). I want to list a few interesting sections here without boring you:
+You can explore or use [the code on GitHub](https://github.com/dogefromage/polysynth). I want to list a few interesting sections here without boring you:
 
 [tuning.cpp](https://github.com/dogefromage/polysynth/blob/master/src/tuning.cpp) starts tuning the oscillators one by one upon request on the front panel. This is the only routine that is blocking, i.e. stops everything else the synth is doing. The tuning works by attaching an interupt to the tuning input pin that counts each edge in a given precisely timed window. After measuring a range of inputted vs measured frequencies, a order two polynomial i.e. a parabola is fitted to the values and stored in a tuning profile that gets loaded every start of the synth. Therefore, the synth only has to tune sometimes,mostly it stays in tune.
 
@@ -173,79 +175,111 @@ The panels puzzled me for a while. I could not produce panels like the ones from
 
 ![CAD model of the panel](/polysynth/model_2.webp#medium "Solidworks model of the main panel")
 
+![Unpainted panel](/polysynth/panel_unpainted.webp "The manufactured main and pitchbend panel. I could never have made it better than the metal workers, so it was a good decision to get it manufactured.")
+
+The paint job was unfortunately a dark story. [Compared to my last synthesizer paint job](/p/minimoog_clone), which went suprisingly well, this one got rather complicated. The order of applying the paint matters a lot, this is what I eventually found out:
+
+1. Painting on aluminium requires a special aluminium primer first
+2. The black base coat follows on top
+3. The colored lines must be screen printed to make them sharp in multiple colors with multiple screens
+4. The white text must be painted with screen printing with multiple screens
+
+![Spray painting the panel](/polysynth/painting_can.webp "Applying the black base layer")
+
+![Screen print exposure](/polysynth/print_exposure.webp "Exposing the screen with photoresist emulsion applied. This screen is one of the three screens for the front panels white text. The correct application of the emulsion and the glass plate compressing the screen is really important for a high resolution and sharp screen. This part I had figured out.")
+
+That was the theoretical plan. However, the following problems occured one after the other driving me insane and always having to repeat everything...
+
+- While screen printing, a small error will ruin the current print, so everything not dry must be washed away. If this is done with a solvent, the layer underneath is going to dissolve and be ruined
+- Multiple screens must be used since the panel is large. The order matters, since the overlapping paint must be dry such that it does not smear while printing the next one
+- The staples in my DIY screen scratches big holes into the base layer paint
+- Paint with the same solvent as the base layer will dissolve and mix with the base layer
+- The clear coat I used actually dissolves the base layer as well and when I thought I was done, the whole panel got a weird spiky texture :(
+
+All of these problems made this project go on for a year longer, while everything else already worked quite well... However, I finally managed to somehow end it, even thought the final panel finish is a bit weird. With a polishing cloth, I was able to softly sand off the small bumps left from the inproperly applied clear coat.
+
+<figure class="medium">
+    <video src="/polysynth/painting_ugly.mp4" controls preload="metadata"></video>
+    <figcaption>Here, I used the transparencies of the white screens as a guide to know where to paint the colored lines to pinpoint the precise locations where the line color changes. You can see my frustration why the print went so poorly. To this day I still don't know, but I think it might be due to me mixing my own shade with screen printing primer and making it the wrong consistency. Also, paint meant for textiles does not behave well onto cold aluminium surfaces.</figcaption>
+</figure>
+
+![Logo on the finished synthesizer](/polysynth/final_logo.jpeg "All in all, I was satisfied with the end result and from afar you cannot really notice the defects.")
+
+![Assembled synthesizer](/polysynth/assembled.webp "Here you can see the synth opened up, and how the panel PCB is installed. It is mounted via 3D printed fixtures that attach to the top panel.")
+
+## Final Result
+
+![Finished synthesizer from the side](/polysynth/final_side_2.jpeg "The final synthesizer.")
+
+![Back of the finished synthesizer](/polysynth/final_back_2.jpeg "The back panel also features some text.")
+
+![Connectors on the back panel](/polysynth/final_io.jpeg "The IO on the back with MIDI, stereo line outs, sustain pedal, USB for MIDI and programming, and power.")
+
+![Clock, arpeggio and sequence controls](/polysynth/final_control.jpeg "The control section.")
+
+The control section contains in addition to the standard arpeggiator from the Juno also a sequencer, which I designed. With "Record" held down, the number of steps can be selected with the number panel. Then the sequence can be recorded and blank steps can be entered.
+
+<figure class="medium">
+    <video src="/polysynth/testing_2.mp4" controls preload="metadata"></video>
+    <figcaption>Here, I demonstrate the sequencer with "Blue Monday". Ignore me knocking the table in amazement.</figcaption>
+</figure>
+
+
+![LFO, VCO, VCF and VCA sliders](/polysynth/final_gen.jpeg "LFO, VCO, VCF behave the same as in the Juno.")
+
+![VCF, VCA, envelope and chorus sections](/polysynth/final_env.jpeg "So does the VCA, ENV, Chorus.")
+
+![Program storage section](/polysynth/final_storage.jpeg "16 patches can be stored or loaded. Every control in the blue region will be stored. The faders then get inactive until they are nudget to a new position, where they send their position again. Since it is annoying to have to nudge all faders if you want to creat a patch, I added a button to load the current panel state as the active patch.")
+
+![Pitch bend wheel and left end of the panel](/polysynth/final_wheel.jpeg "The pitchwheel is 3D printed and with a torsion spring and a tension spring, the two axes of the wheel behave similarly to the Junos pitch knob. I unfortunately could not find a video right now... The pitch bend range can be extended to an octave with a toggle. Pushing the wheel either adds vibrato modulation or modulates the filter cutoff with the LFO depending on the chosen amount.")
+
 ## Demos
 
+The demos might contain bad playing and poor camera quality. Don't be disturbed!
+
+<figure class="medium">
+    <video src="/polysynth/testing_3.mp4" controls preload="metadata"></video>
+    <figcaption>Some familiar sounds: "Kids" from the Stranger Things soundtrack, then the "Sweet Dreams" bass line.</figcaption>
+</figure>
+
+
+<figure class="medium">
+    <video src="/polysynth/testing_4.mp4" controls preload="metadata"></video>
+    <figcaption>A vaporwave classic: "Resonance" by "Home". Notes can be played while the arp is working. Both players get the same note priority.</figcaption>
+</figure>
+
+I must post more demos in the future showing the niche sounds that can be achieved! TODO...
+
+## Files
+
+Feel free to ask me a question about the process or ask me if you want any files, code, cad or schematics :)
 
 
 
+<!-- Unused -->
 
+<!-- ![CAD model of the enclosure](/polysynth/model.webp) -->
 
-![CAD model of the enclosure](/polysynth/model.webp)
+<!-- ![Parts](/polysynth/parts.webp) -->
 
-![Parts](/polysynth/parts.webp)
+<!-- ![Painted panel](/polysynth/painting.webp) -->
 
+<!-- ![Close-up of the painted panel](/polysynth/painting_closeup.webp) -->
 
+<!-- ![Finished synthesizer from the front](/polysynth/final_front.jpeg) -->
 
+<!-- ![Finished synthesizer from the back](/polysynth/final_back.jpeg) -->
 
+<!-- <video src="/polysynth/pitchbend_mechanism_old.mp4" controls preload="metadata"></video> -->
 
-![Keyboard](/polysynth/keyboard.webp)
+<!-- <video src="/polysynth/pitchbend_mechanism_old_2.mp4" controls preload="metadata"></video> -->
 
-![Unpainted panel](/polysynth/panel_unpainted.webp)
+<!-- <video src="/polysynth/testing_1.mp4" controls preload="metadata"></video> -->
 
-![Spray painting the panel](/polysynth/painting_can.webp)
+<!-- ![Finished synthesizer on its stand](/polysynth/final_top_2.jpeg) -->
 
-![Painted panel](/polysynth/painting.webp)
+<!-- ![Finished synthesizer on its stand](/polysynth/final_top_3.jpeg) -->
 
-![Close-up of the painted panel](/polysynth/painting_closeup.webp)
+<!-- ![Finished synthesizer on its stand](/polysynth/final_top_4.jpeg) -->
 
-![Screen print exposure](/polysynth/print_exposure.webp)
-
-
-
-![Assembled synthesizer](/polysynth/assembled.webp)
-
-![Finished synthesizer from the front](/polysynth/final_front.jpeg)
-
-![Finished synthesizer from the back](/polysynth/final_back.jpeg)
-
-![Logo on the finished synthesizer](/polysynth/final_logo.jpeg)
-
-
-<video src="/polysynth/painting_ugly.mp4" controls preload="metadata"></video>
-
-<video src="/polysynth/pitchbend_mechanism_old.mp4" controls preload="metadata"></video>
-
-<video src="/polysynth/pitchbend_mechanism_old_2.mp4" controls preload="metadata"></video>
-
-<video src="/polysynth/testing_1.mp4" controls preload="metadata"></video>
-
-<video src="/polysynth/testing_2.mp4" controls preload="metadata"></video>
-
-<video src="/polysynth/testing_3.mp4" controls preload="metadata"></video>
-
-<video src="/polysynth/testing_4.mp4" controls preload="metadata"></video>
-
-
-![Finished synthesizer on its stand](/polysynth/final_top_2.jpeg)
-
-![Finished synthesizer on its stand](/polysynth/final_top_3.jpeg)
-
-![Finished synthesizer on its stand](/polysynth/final_top_4.jpeg)
-
-![Finished synthesizer from the side](/polysynth/final_side_2.jpeg)
-
-![Finished synthesizer from the side](/polysynth/final_side_3.jpeg)
-
-![Back of the finished synthesizer](/polysynth/final_back_2.jpeg)
-
-![Connectors on the back panel](/polysynth/final_io.jpeg)
-
-![Clock, arpeggio and sequence controls](/polysynth/final_control.jpeg)
-
-![LFO, VCO, VCF and VCA sliders](/polysynth/final_gen.jpeg)
-
-![VCF, VCA, envelope and chorus sections](/polysynth/final_env.jpeg)
-
-![Program storage section](/polysynth/final_storage.jpeg)
-
-![Pitch bend wheel and left end of the panel](/polysynth/final_wheel.jpeg)
+<!-- ![Finished synthesizer from the side](/polysynth/final_side_3.jpeg) -->
