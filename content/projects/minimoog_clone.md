@@ -16,11 +16,11 @@ My synthesizer uses the principle of [subtractive synthesis](https://en.wikipedi
 
 ![The signal flow in my synthesizer](/synth_signal_flow.png "The signal flow of my synthesizer. (v.c.=voltage controlled, VCO=v.c. oscillator, VCF=v.c. filter, VCA=v.c. amplifier, LFO=low frequency oscillator, EG=envelope generator)")
 
-The main drawback of this synthesis is that only one note can be played at once, as it works similar to a human voice. Later, synthesizers were built which featured multiple of the mentioned circuit together to allow multiple notes. A few years later I have build a polyphonic synthesizer, [which is mentioned in this post](/p/polysynth).
+The main drawback of this synthesis is that only one note can be played at once, as it works similar to a human voice. Later, synthesizers were built which featured multiple copies of the mentioned circuit together to allow multiple notes. A few years later I built a polyphonic synthesizer, [which is mentioned in this post](/p/polysynth).
 
 ![The unpainted synthesizer](/synth_raw.jpg#small "The synthesizer chassis before painting.")
 
-I used plywood for building the body, which I later stained with Mahogany stain and protected using clear coat. The panel is 1mm thick aluminium, which I spray painted and then screen printed using white color. For this project, it was easy to process the aluminium, since all holes where circular and could easily be drilled.
+I used plywood for building the body, which I later stained with Mahogany stain and protected using clear coat. The panel is 1mm thick aluminium, which I spray painted and then screen printed using white color. For this project, it was easy to process the aluminium, since all holes were circular and could easily be drilled.
 
 ![The final synthesizer](/synth_front.jpg "The final synthesizer.")
 
